@@ -62,8 +62,12 @@ pipeline {
         }
 
         stage('SonarQube Analysis') {
-            steps {
-                withSonarQubeEnv('SonarQube') {
+    steps {
+        withSonarQubeEnv('SonarQube') {
+            script {
+                def scannerHome = tool 'SonarScanner'
+
+                withEnv(["PATH+SONAR_SCANNER=${scannerHome}/bin"]) {
                     sh '''
                         sonar-scanner \
                           -Dsonar.projectBaseDir="$WORKSPACE"
@@ -71,6 +75,8 @@ pipeline {
                 }
             }
         }
+    }
+}
 
         stage('Frontend Build') {
             steps {
