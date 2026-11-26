@@ -32,4 +32,7 @@ const startServer = async () => {
   }
 };
 
-startServer();
+startServer().catch((error) => {
+    console.error('[Server] Unhandled startup error:', error);
+    process.exit(1);
+});
