@@ -1,8 +1,9 @@
+
 pipeline {
     agent any
 
     triggers {
-        // Triggered automatically by GitHub Webhook (GitHub hook trigger for GITScm polling)
+        // Triggered automatically by GitHub Webhook
         githubPush()
     }
 
@@ -60,6 +61,17 @@ pipeline {
             }
         }
 
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    sh '''
+                        sonar-scanner \
+                          -Dsonar.projectBaseDir="$WORKSPACE"
+                    '''
+                }
+            }
+        }
+
         stage('Frontend Build') {
             steps {
                 dir('frontend') {
@@ -77,8 +89,8 @@ pipeline {
         stage('Docker Compose Deployment') {
             steps {
                 sh '''
-                    # Resolve EC2 public IP (IMDSv2 with IMDSv1 fallback) for CORS ALLOWED_ORIGINS
                     TOKEN=$(curl -s -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 60" || true)
+
                     if [ -n "$TOKEN" ]; then
                         EC2_IP=$(curl -s -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/public-ipv4 || true)
                     else
@@ -91,7 +103,6 @@ pipeline {
                         export ALLOWED_ORIGINS="http://localhost,http://localhost:80"
                     fi
 
-                    # Redeploy containers while preserving the named mysql_data volume
                     docker compose up -d --remove-orphans
                 '''
             }
@@ -101,12 +112,15 @@ pipeline {
             steps {
                 sh '''
                     echo "Waiting for containers to pass Docker health checks..."
+
                     for i in $(seq 1 24); do
                         HEALTHY_COUNT=$(docker compose ps --format json 2>/dev/null | grep -c '"Health":"healthy"' || true)
+
                         if [ "$HEALTHY_COUNT" -ge 3 ]; then
                             echo "All 3 services are healthy."
                             break
                         fi
+
                         echo "Waiting for services to become healthy ($i/24)..."
                         sleep 5
                     done
@@ -114,7 +128,7 @@ pipeline {
                     docker compose ps
 
                     echo "Verifying Frontend (NGINX)..."
-                    curl -fsS -o /dev/null -w "Frontend HTTP Status: %{http_code}\n" http://localhost/
+                    curl -fsS -o /dev/null -w "Frontend HTTP Status: %{http_code}\\n" http://localhost/
 
                     echo "Verifying Backend API through NGINX Proxy..."
                     curl -fsS http://localhost/api/health
@@ -128,12 +142,13 @@ pipeline {
         success {
             echo 'CodeSentinel CI/CD pipeline succeeded and application is live.'
         }
+
         failure {
             echo 'CodeSentinel CI/CD pipeline failed. Check stage logs.'
             sh 'docker compose logs --tail=50 || true'
         }
+
         always {
-            // Clean dangling images without touching running containers or mysql_data volume
             sh 'docker image prune -f || true'
         }
     }
