@@ -1,6 +1,16 @@
+
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { ShieldCheck, Lock, Mail, Eye, EyeOff, ArrowRight, AlertCircle, CheckCircle2 } from 'lucide-react';
+import {
+  ShieldCheck,
+  Lock,
+  Mail,
+  Eye,
+  EyeOff,
+  ArrowRight,
+  AlertCircle,
+  CheckCircle2
+} from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import ThemeToggle from '../components/common/ThemeToggle';
@@ -33,7 +43,11 @@ const LoginPage = () => {
       const from = location.state?.from?.pathname || '/dashboard';
       navigate(from, { replace: true });
     } catch (err) {
-      setErrorMsg(err.response?.data?.message || err.message || 'Invalid email or password.');
+      setErrorMsg(
+        err.response?.data?.message ||
+        err.message ||
+        'Invalid email or password.'
+      );
     } finally {
       setLoading(false);
     }
@@ -41,34 +55,34 @@ const LoginPage = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden transition-colors">
-      {/* Theme Toggle Button */}
       <div className="absolute top-5 right-5 z-20">
         <ThemeToggle />
       </div>
 
-      {/* Decorative Background Glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 bg-gradient-to-b from-blue-600/10 via-transparent to-transparent pointer-events-none" />
       <div className="absolute -top-32 -left-32 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
 
-      {/* Header Branding */}
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center relative z-10">
         <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 text-white shadow-xl shadow-blue-500/30 mb-4">
           <ShieldCheck className="w-8 h-8" />
         </div>
+
         <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
           Code<span className="text-blue-600 dark:text-blue-400">Sentinel</span>
         </h2>
+
         <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
           Enterprise Three-Tier Task Manager & Operations Platform
         </p>
       </div>
 
-      {/* Form Container */}
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md px-4 sm:px-0 relative z-10">
         <div className="bg-white dark:bg-slate-800/90 backdrop-blur-xl border border-slate-200 dark:border-slate-700/80 py-8 px-6 sm:px-10 rounded-3xl shadow-2xl transition-colors">
           <div className="mb-6">
-            <h3 className="text-xl font-bold text-slate-900 dark:text-white">Sign In to Sentinel</h3>
+            <h3 className="text-xl font-bold text-slate-900 dark:text-white">
+              Sign In to Sentinel
+            </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
               Enter your authorized credentials to access your task dashboard.
             </p>
@@ -82,14 +96,19 @@ const LoginPage = () => {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Email Field */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+              <label
+                htmlFor="login-email"
+                className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5"
+              >
                 Work Email
               </label>
+
               <div className="relative">
                 <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+
                 <input
+                  id="login-email"
                   type="email"
                   required
                   autoComplete="email"
@@ -101,14 +120,19 @@ const LoginPage = () => {
               </div>
             </div>
 
-            {/* Password Field */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+              <label
+                htmlFor="login-password"
+                className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5"
+              >
                 Password
               </label>
+
               <div className="relative">
                 <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+
                 <input
+                  id="login-password"
                   type={showPassword ? 'text' : 'password'}
                   required
                   autoComplete="current-password"
@@ -117,17 +141,22 @@ const LoginPage = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all"
                 />
+
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
                   className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
                 >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  {showPassword ? (
+                    <EyeOff className="w-4 h-4" />
+                  ) : (
+                    <Eye className="w-4 h-4" />
+                  )}
                 </button>
               </div>
             </div>
 
-            {/* Submit Button */}
             <div className="pt-2">
               <button
                 type="submit"
@@ -146,18 +175,19 @@ const LoginPage = () => {
             </div>
           </form>
 
-          {/* Footer Navigation */}
           <div className="mt-6 pt-5 border-t border-slate-100 dark:border-slate-700/60 text-center">
             <p className="text-xs text-slate-500 dark:text-slate-400">
               Don't have an account yet?{' '}
-              <Link to="/register" className="font-semibold text-blue-600 dark:text-blue-400 hover:underline underline-offset-4">
+              <Link
+                to="/register"
+                className="font-semibold text-blue-600 dark:text-blue-400 hover:underline underline-offset-4"
+              >
                 Create Account
               </Link>
             </p>
           </div>
         </div>
 
-        {/* Security badges */}
         <div className="mt-6 flex items-center justify-center gap-4 text-xs text-slate-500 dark:text-slate-400">
           <span className="flex items-center gap-1">
             <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" /> JWT Protected

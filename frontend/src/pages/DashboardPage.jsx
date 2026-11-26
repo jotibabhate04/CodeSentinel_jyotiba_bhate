@@ -1,11 +1,12 @@
+
 import React, { useState, useEffect, useCallback } from 'react';
-import { 
-  CheckCircle2, 
-  Clock, 
-  Flame, 
-  Layers, 
-  Plus, 
-  Inbox, 
+import {
+  CheckCircle2,
+  Clock,
+  Flame,
+  Layers,
+  Plus,
+  Inbox,
   RefreshCw,
   Sparkles
 } from 'lucide-react';
@@ -26,15 +27,20 @@ const DashboardPage = () => {
 
   // Tasks & stats state
   const [tasks, setTasks] = useState([]);
-  const [stats, setStats] = useState({ total: 0, completed: 0, pending: 0, highPriority: 0 });
+  const [stats, setStats] = useState({
+    total: 0,
+    completed: 0,
+    pending: 0,
+    highPriority: 0
+  });
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
   // Filter & view states
-  const [sidebarFilter, setSidebarFilter] = useState('all'); // 'all' | 'pending' | 'completed' | 'high-priority'
+  const [sidebarFilter, setSidebarFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [priorityFilter, setPriorityFilter] = useState('all');
-  const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'table'
+  const [viewMode, setViewMode] = useState('grid');
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Modals state
@@ -50,6 +56,7 @@ const DashboardPage = () => {
   const fetchStats = useCallback(async () => {
     try {
       const res = await taskApi.getStats();
+
       if (res.success && res.data) {
         setStats(res.data);
       }
@@ -71,7 +78,7 @@ const DashboardPage = () => {
       const res = await taskApi.getTasks({
         search: searchQuery,
         status: statusParam,
-        priority: priorityParam,
+        priority: priorityParam
       });
 
       if (res.success && res.data) {
@@ -87,59 +94,92 @@ const DashboardPage = () => {
 
   // Initial load and filter change trigger
   useEffect(() => {
-    setLoading(true);
-    fetchTasks();
-    fetchStats();
+    const loadDashboard = async () => {
+      setLoading(true);
+      await Promise.all([fetchTasks(), fetchStats()]);
+    };
+
+    loadDashboard().catch((err) => {
+      console.error('Failed to load dashboard:', err);
+      setLoading(false);
+    });
   }, [fetchTasks, fetchStats]);
 
+  // Refresh dashboard data
   const handleRefresh = async () => {
     setRefreshing(true);
-    await Promise.all([fetchTasks(), fetchStats()]);
+
+    try {
+      await Promise.all([fetchTasks(), fetchStats()]);
+    } catch (err) {
+      console.error('Failed to refresh dashboard:', err);
+      setRefreshing(false);
+    }
   };
 
   // Status toggle handler (pending <-> completed)
   const handleToggleStatus = async (task) => {
-    const nextStatus = task.status === 'completed' ? 'pending' : 'completed';
+    const nextStatus =
+      task.status === 'completed' ? 'pending' : 'completed';
+
     // Optimistic UI update
     setTasks((prev) =>
-      prev.map((t) => (t.id === task.id ? { ...t, status: nextStatus } : t))
+      prev.map((t) =>
+        t.id === task.id ? { ...t, status: nextStatus } : t
+      )
     );
 
     try {
       await taskApi.updateStatus(task.id, nextStatus);
       success(`Task marked as ${nextStatus}.`);
-      fetchStats();
+      await fetchStats();
     } catch (err) {
       // Revert on error
       setTasks((prev) =>
-        prev.map((t) => (t.id === task.id ? { ...t, status: task.status } : t))
+        prev.map((t) =>
+          t.id === task.id ? { ...t, status: task.status } : t
+        )
       );
-      error(err.response?.data?.message || 'Failed to update task status.');
+
+      error(
+        err.response?.data?.message ||
+        'Failed to update task status.'
+      );
     }
   };
 
   // Create / Update task submit handler
   const handleSaveTask = async (taskData) => {
     setIsSubmitting(true);
+
     try {
       if (selectedTask) {
         // Edit Mode
         const res = await taskApi.updateTask(selectedTask.id, taskData);
+
         success('Task updated successfully.');
+
         setTasks((prev) =>
-          prev.map((t) => (t.id === selectedTask.id ? res.data : t))
+          prev.map((t) =>
+            t.id === selectedTask.id ? res.data : t
+          )
         );
       } else {
         // Create Mode
         const res = await taskApi.createTask(taskData);
+
         success('Task created successfully.');
         setTasks((prev) => [res.data, ...prev]);
       }
+
       setIsTaskModalOpen(false);
       setSelectedTask(null);
-      fetchStats();
+      await fetchStats();
     } catch (err) {
-      error(err.response?.data?.message || 'Failed to save task.');
+      error(
+        err.response?.data?.message ||
+        'Failed to save task.'
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -148,16 +188,27 @@ const DashboardPage = () => {
   // Delete task submit handler
   const handleDeleteTask = async () => {
     if (!taskToDelete) return;
+
     setIsDeleting(true);
+
     try {
       await taskApi.deleteTask(taskToDelete.id);
+
       success('Task deleted successfully.');
-      setTasks((prev) => prev.filter((t) => t.id !== taskToDelete.id));
+
+      setTasks((prev) =>
+        prev.filter((t) => t.id !== taskToDelete.id)
+      );
+
       setIsDeleteModalOpen(false);
       setTaskToDelete(null);
-      fetchStats();
+
+      await fetchStats();
     } catch (err) {
-      error(err.response?.data?.message || 'Failed to delete task.');
+      error(
+        err.response?.data?.message ||
+        'Failed to delete task.'
+      );
     } finally {
       setIsDeleting(false);
     }
@@ -181,7 +232,9 @@ const DashboardPage = () => {
 
   // Calculate completion percentage
   const completionPercentage =
-    stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0;
+    stats.total > 0
+      ? Math.round((stats.completed / stats.total) * 100)
+      : 0;
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex transition-colors">
@@ -210,6 +263,7 @@ const DashboardPage = () => {
               <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
                 Operations Dashboard
               </h1>
+
               <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
                 Monitor and orchestrate your distributed project deliverables.
               </p>
@@ -249,6 +303,7 @@ const DashboardPage = () => {
               active={sidebarFilter === 'all'}
               onClick={() => setSidebarFilter('all')}
             />
+
             <StatCard
               title="Pending"
               value={stats.pending}
@@ -258,6 +313,7 @@ const DashboardPage = () => {
               active={sidebarFilter === 'pending'}
               onClick={() => setSidebarFilter('pending')}
             />
+
             <StatCard
               title="Completed"
               value={stats.completed}
@@ -267,6 +323,7 @@ const DashboardPage = () => {
               active={sidebarFilter === 'completed'}
               onClick={() => setSidebarFilter('completed')}
             />
+
             <StatCard
               title="High Priority"
               value={stats.highPriority}
@@ -285,8 +342,12 @@ const DashboardPage = () => {
                 <div className="p-2.5 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400">
                   <Sparkles className="w-5 h-5" />
                 </div>
+
                 <div>
-                  <h4 className="text-sm font-bold text-slate-800 dark:text-slate-100">Sprint Health & Completion</h4>
+                  <h4 className="text-sm font-bold text-slate-800 dark:text-slate-100">
+                    Sprint Health & Completion
+                  </h4>
+
                   <p className="text-xs text-slate-500 dark:text-slate-400">
                     {stats.completed} of {stats.total} tasks resolved across current workspace.
                   </p>
@@ -298,6 +359,7 @@ const DashboardPage = () => {
                   <span>Progress</span>
                   <span>{completionPercentage}%</span>
                 </div>
+
                 <div className="w-full h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                   <div
                     className="h-full bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full transition-all duration-500"
@@ -324,19 +386,27 @@ const DashboardPage = () => {
           {/* Task Collection Content */}
           {loading ? (
             <div className="py-24 flex items-center justify-center">
-              <LoadingSpinner text="Synchronizing tasks with Sentinel DB..." size="lg" />
+              <LoadingSpinner
+                text="Synchronizing tasks with Sentinel DB..."
+                size="lg"
+              />
             </div>
           ) : tasks.length === 0 ? (
             <div className="bg-white dark:bg-slate-900 rounded-3xl p-12 text-center border border-slate-200/80 dark:border-slate-800 shadow-sm max-w-lg mx-auto my-12 transition-colors">
               <div className="w-16 h-16 rounded-2xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto mb-4">
                 <Inbox className="w-8 h-8" />
               </div>
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white">No tasks found</h3>
+
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                No tasks found
+              </h3>
+
               <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 max-w-xs mx-auto leading-relaxed">
                 {searchQuery || priorityFilter !== 'all' || sidebarFilter !== 'all'
                   ? 'No tasks match your active filter criteria. Try resetting filters.'
                   : 'Get started by creating your first task in CodeSentinel.'}
               </p>
+
               <div className="mt-6 flex items-center justify-center gap-3">
                 {searchQuery || priorityFilter !== 'all' || sidebarFilter !== 'all' ? (
                   <button

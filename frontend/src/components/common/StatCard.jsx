@@ -1,6 +1,15 @@
+
 import React from 'react';
 
-const StatCard = ({ title, value, icon: Icon, color = 'blue', subtitle, active, onClick }) => {
+const StatCard = ({
+  title,
+  value,
+  icon: Icon,
+  color = 'blue',
+  subtitle,
+  active,
+  onClick
+}) => {
   const colorMap = {
     blue: {
       bg: 'bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400',
@@ -26,23 +35,50 @@ const StatCard = ({ title, value, icon: Icon, color = 'blue', subtitle, active, 
 
   const scheme = colorMap[color] || colorMap.blue;
 
-  return (
-    <div
-      onClick={onClick}
-      className={`bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200/80 dark:border-slate-800 shadow-sm transition-all duration-200 cursor-pointer ${
-        scheme.border
-      } ${active ? scheme.activeRing : ''}`}
-    >
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-xs font-semibold tracking-wider text-slate-500 dark:text-slate-400 uppercase">{title}</p>
-          <h3 className="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-white mt-1">{value}</h3>
-          {subtitle && <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">{subtitle}</p>}
-        </div>
-        <div className={`p-3 rounded-xl ${scheme.bg}`}>
-          <Icon className="w-6 h-6" />
-        </div>
+  const cardContent = (
+    <div className="flex items-center justify-between">
+      <div>
+        <p className="text-xs font-semibold tracking-wider text-slate-500 dark:text-slate-400 uppercase">
+          {title}
+        </p>
+
+        <h3 className="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-white mt-1">
+          {value}
+        </h3>
+
+        {subtitle && (
+          <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
+            {subtitle}
+          </p>
+        )}
       </div>
+
+      <div className={`p-3 rounded-xl ${scheme.bg}`}>
+        <Icon className="w-6 h-6" aria-hidden="true" />
+      </div>
+    </div>
+  );
+
+  const cardClassName = `bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200/80 dark:border-slate-800 shadow-sm transition-all duration-200 ${
+    scheme.border
+  } ${active ? scheme.activeRing : ''}`;
+
+  if (typeof onClick === 'function') {
+    return (
+      <button
+        type="button"
+        onClick={onClick}
+        aria-pressed={!!active}
+        className={`w-full text-left cursor-pointer ${cardClassName}`}
+      >
+        {cardContent}
+      </button>
+    );
+  }
+
+  return (
+    <div className={cardClassName}>
+      {cardContent}
     </div>
   );
 };

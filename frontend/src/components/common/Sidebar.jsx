@@ -1,12 +1,13 @@
+
 import React from 'react';
-import { 
-  ShieldCheck, 
-  LayoutDashboard, 
-  Clock, 
-  CheckCircle2, 
-  Flame, 
-  LogOut, 
-  User, 
+import {
+  ShieldCheck,
+  LayoutDashboard,
+  Clock,
+  CheckCircle2,
+  Flame,
+  LogOut,
+  User,
   X,
   Sun,
   Moon
@@ -34,8 +35,10 @@ const Sidebar = ({ currentFilter, onFilterChange, isOpen, onClose }) => {
     <>
       {/* Mobile Backdrop */}
       {isOpen && (
-        <div 
+        <button
+          type="button"
           onClick={onClose}
+          aria-label="Close navigation menu"
           className="fixed inset-0 z-40 bg-slate-900/50 backdrop-blur-sm lg:hidden"
         />
       )}
@@ -53,13 +56,20 @@ const Sidebar = ({ currentFilter, onFilterChange, isOpen, onClose }) => {
               <ShieldCheck className="w-5 h-5" />
             </div>
             <div>
-              <span className="font-extrabold text-lg text-slate-900 dark:text-white tracking-tight">Code<span className="text-blue-600 dark:text-blue-400">Sentinel</span></span>
-              <span className="block text-[10px] text-slate-400 uppercase font-semibold tracking-wider">Enterprise TaskOps</span>
+              <span className="font-extrabold text-lg text-slate-900 dark:text-white tracking-tight">
+                Code<span className="text-blue-600 dark:text-blue-400">Sentinel</span>
+              </span>
+              <span className="block text-[10px] text-slate-400 uppercase font-semibold tracking-wider">
+                Enterprise TaskOps
+              </span>
             </div>
           </div>
+
           {onClose && (
-            <button 
-              onClick={onClose} 
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Close sidebar"
               className="lg:hidden text-slate-400 hover:text-slate-600 dark:hover:text-white p-1 rounded-lg"
             >
               <X className="w-5 h-5" />
@@ -69,14 +79,20 @@ const Sidebar = ({ currentFilter, onFilterChange, isOpen, onClose }) => {
 
         {/* Navigation Section */}
         <div className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
-          <p className="px-3 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">Navigation</p>
+          <p className="px-3 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">
+            Navigation
+          </p>
+
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = currentFilter === item.id;
+
             return (
               <button
                 key={item.id}
+                type="button"
                 onClick={() => handleSelect(item.id)}
+                aria-current={isActive ? 'page' : undefined}
                 className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium text-sm transition-all duration-150 ${
                   isActive
                     ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30 font-semibold'
@@ -92,14 +108,22 @@ const Sidebar = ({ currentFilter, onFilterChange, isOpen, onClose }) => {
 
         {/* Appearance & User Profile Section */}
         <div className="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/60 space-y-3">
+
           {/* Theme Mode Toggle Row */}
           <div className="flex items-center justify-between px-2 py-1.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs">
             <span className="font-semibold text-slate-600 dark:text-slate-300 flex items-center gap-2">
-              {isDark ? <Moon className="w-3.5 h-3.5 text-blue-400" /> : <Sun className="w-3.5 h-3.5 text-amber-500" />}
+              {isDark ? (
+                <Moon className="w-3.5 h-3.5 text-blue-400" />
+              ) : (
+                <Sun className="w-3.5 h-3.5 text-amber-500" />
+              )}
               {isDark ? 'Dark Theme' : 'Light Theme'}
             </span>
+
             <button
+              type="button"
               onClick={toggleTheme}
+              aria-label={`Switch to ${isDark ? 'Light' : 'Dark'} Theme`}
               className="px-2.5 py-1 rounded-lg font-bold text-[11px] bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-blue-600 hover:text-white dark:hover:bg-blue-600 transition-colors"
             >
               Switch to {isDark ? 'Light' : 'Dark'}
@@ -110,13 +134,19 @@ const Sidebar = ({ currentFilter, onFilterChange, isOpen, onClose }) => {
             <div className="w-9 h-9 rounded-full bg-slate-200 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold text-sm">
               {user?.name ? user.name.charAt(0).toUpperCase() : <User className="w-4 h-4" />}
             </div>
+
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">{user?.name || 'Authorized User'}</p>
-              <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{user?.email || 'user@codesentinel.io'}</p>
+              <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">
+                {user?.name || 'Authorized User'}
+              </p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+                {user?.email || 'user@codesentinel.io'}
+              </p>
             </div>
           </div>
 
           <button
+            type="button"
             onClick={logout}
             className="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs font-semibold text-rose-600 dark:text-rose-400 hover:text-rose-700 dark:hover:text-white hover:bg-rose-50 dark:hover:bg-rose-950/40 border border-rose-200 dark:border-transparent dark:hover:border-rose-900/50 rounded-xl transition-colors"
           >

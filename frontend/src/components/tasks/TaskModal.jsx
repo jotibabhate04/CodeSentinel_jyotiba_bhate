@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { X, Calendar, Flag, AlertCircle } from 'lucide-react';
 
@@ -76,6 +77,7 @@ const TaskModal = ({ isOpen, onClose, onSubmit, initialData = null, isSubmitting
           <button
             onClick={onClose}
             disabled={isSubmitting}
+            aria-label="Close task modal"
             className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 rounded-lg transition-colors"
           >
             <X className="w-5 h-5" />
@@ -83,12 +85,12 @@ const TaskModal = ({ isOpen, onClose, onSubmit, initialData = null, isSubmitting
         </div>
 
         <form onSubmit={handleSubmit} className="mt-5 space-y-4">
-          {/* Title Field */}
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+            <label htmlFor="task-title" className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
               Task Title <span className="text-rose-500">*</span>
             </label>
             <input
+              id="task-title"
               type="text"
               placeholder="e.g. Implement AWS ECS deployment pipeline"
               value={formData.title}
@@ -107,12 +109,12 @@ const TaskModal = ({ isOpen, onClose, onSubmit, initialData = null, isSubmitting
             )}
           </div>
 
-          {/* Description Field */}
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+            <label htmlFor="task-description" className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
               Description (Optional)
             </label>
             <textarea
+              id="task-description"
               rows={3}
               placeholder="Provide context, acceptance criteria, or documentation notes..."
               value={formData.description}
@@ -121,14 +123,14 @@ const TaskModal = ({ isOpen, onClose, onSubmit, initialData = null, isSubmitting
             />
           </div>
 
-          {/* Priority & Status Controls */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1">
+              <label htmlFor="task-priority" className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1">
                 <Flag className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
                 Priority
               </label>
               <select
+                id="task-priority"
                 value={formData.priority}
                 onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
                 className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm text-slate-800 dark:text-slate-100 bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/50 focus:border-blue-500 transition-all"
@@ -140,10 +142,11 @@ const TaskModal = ({ isOpen, onClose, onSubmit, initialData = null, isSubmitting
             </div>
 
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
+              <label htmlFor="task-status" className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
                 Status
               </label>
               <select
+                id="task-status"
                 value={formData.status}
                 onChange={(e) => setFormData({ ...formData, status: e.target.value })}
                 className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm text-slate-800 dark:text-slate-100 bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/50 focus:border-blue-500 transition-all"
@@ -154,13 +157,13 @@ const TaskModal = ({ isOpen, onClose, onSubmit, initialData = null, isSubmitting
             </div>
           </div>
 
-          {/* Due Date Field */}
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1">
+            <label htmlFor="task-due-date" className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1">
               <Calendar className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
               Due Date (Optional)
             </label>
             <input
+              id="task-due-date"
               type="date"
               value={formData.dueDate}
               onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
@@ -168,7 +171,6 @@ const TaskModal = ({ isOpen, onClose, onSubmit, initialData = null, isSubmitting
             />
           </div>
 
-          {/* Modal Actions */}
           <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
             <button
               type="button"
