@@ -23,17 +23,26 @@ const pool = mysql.createPool(dbConfig);
 const initializeDatabase = async () => {
   let connection;
   try {
-    // First, test connectivity to MySQL server
-    const baseConfig = { ...dbConfig };
-    delete baseConfig.database;
+    try {
+      // Connect directly to target database first (works with least-privilege DB users)
+      connection = await pool.getConnection();
+    } catch (connError) {
+      if (connError.code === 'ER_BAD_DB_ERROR') {
+        // Fallback for local setup when database has not been created yet
+        const baseConfig = { ...dbConfig };
+        delete baseConfig.database;
 
-    const rootConnection = await mysql.createConnection(baseConfig);
-    await rootConnection.query(
-      `CREATE DATABASE IF NOT EXISTS \`${dbConfig.database}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`
-    );
-    await rootConnection.end();
+        const rootConnection = await mysql.createConnection(baseConfig);
+        await rootConnection.query(
+          `CREATE DATABASE IF NOT EXISTS \`${dbConfig.database}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`
+        );
+        await rootConnection.end();
+        connection = await pool.getConnection();
+      } else {
+        throw connError;
+      }
+    }
 
-    connection = await pool.getConnection();
     console.log(`[Database] Connected successfully to MySQL database: ${dbConfig.database} on ${dbConfig.host}:${dbConfig.port}`);
 
     // Create users table if not exists

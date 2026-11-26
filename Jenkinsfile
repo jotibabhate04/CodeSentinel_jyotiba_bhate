@@ -74,7 +74,7 @@ pipeline {
             }
         }
 
-        stage('Deploy Application') {
+        stage('Docker Compose Deployment') {
             steps {
                 sh '''
                     # Resolve EC2 public IP (IMDSv2 with IMDSv1 fallback) for CORS ALLOWED_ORIGINS
@@ -97,17 +97,26 @@ pipeline {
             }
         }
 
-        stage('Verify Deployment') {
+        stage('Application Health Verification') {
             steps {
                 sh '''
-                    echo "Waiting for containers to pass health checks..."
-                    sleep 10
+                    echo "Waiting for containers to pass Docker health checks..."
+                    for i in $(seq 1 24); do
+                        HEALTHY_COUNT=$(docker compose ps --format json 2>/dev/null | grep -c '"Health":"healthy"' || true)
+                        if [ "$HEALTHY_COUNT" -ge 3 ]; then
+                            echo "All 3 services are healthy."
+                            break
+                        fi
+                        echo "Waiting for services to become healthy ($i/24)..."
+                        sleep 5
+                    done
+
                     docker compose ps
 
-                    echo "Verifying Frontend (Nginx)..."
+                    echo "Verifying Frontend (NGINX)..."
                     curl -fsS -o /dev/null -w "Frontend HTTP Status: %{http_code}\n" http://localhost/
 
-                    echo "Verifying Backend API through Nginx Proxy..."
+                    echo "Verifying Backend API through NGINX Proxy..."
                     curl -fsS http://localhost/api/health
                     echo ""
                 '''
