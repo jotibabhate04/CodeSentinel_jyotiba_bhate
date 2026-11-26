@@ -338,3 +338,4 @@ npm test --prefix backend
 - **JWT Protection:** Signed tokens verified on every private request with expiration enforcement.
 - **HTTP Security Headers:** `helmet` enabled to prevent clickjacking, MIME sniffing, and XSS attacks.
 - **Input Sanitization:** `express-validator` validates and normalizes all user input before database execution.
+# Webhook Test
