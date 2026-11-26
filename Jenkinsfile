@@ -14,7 +14,7 @@ pipeline {
     }
 
     environment {
-        COMPOSE_PROJECT_NAME = 'codesentinel'
+        COMPOSE_PROJECT_NAME = 'codesentinel_jyotiba_bhate''
         DB_NAME              = 'codesentinel_db'
         DB_USER              = 'codesentinel_user'
         DB_ROOT_PASSWORD     = credentials('codesentinel-db-root-password')
