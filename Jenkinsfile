@@ -92,11 +92,16 @@ pipeline {
                           node src/server.js \
                           > "$WORKSPACE/backend-coverage-server.log" 2>&1 &
 
-                        SERVER_PID=$!
+                        COVERAGE_PID=$!
 
                         cleanup() {
-                            kill -TERM "$SERVER_PID" 2>/dev/null || true
-                            wait "$SERVER_PID" 2>/dev/null || true
+                            SERVER_PID=$(pgrep -f '[n]ode src/server.js' | head -n 1 || true)
+
+                            if [ -n "$SERVER_PID" ]; then
+                                kill -TERM "$SERVER_PID" 2>/dev/null || true
+                            fi
+
+                            wait "$COVERAGE_PID" 2>/dev/null || true
                         }
 
                         trap cleanup EXIT
@@ -108,7 +113,6 @@ pipeline {
                                 READY=1
                                 break
                             fi
-
                             sleep 1
                         done
 
@@ -121,18 +125,27 @@ pipeline {
                         echo "Running backend integration tests..."
                         node test_api.js
 
-                        echo "Stopping instrumented backend..."
-                        kill -TERM "$SERVER_PID" 2>/dev/null || true
-                        wait "$SERVER_PID" || true
+                        echo "Stopping backend gracefully..."
+
+                        SERVER_PID=$(pgrep -f '[n]ode src/server.js' | head -n 1 || true)
+
+                        if [ -n "$SERVER_PID" ]; then
+                            kill -TERM "$SERVER_PID"
+                        fi
+
+                        wait "$COVERAGE_PID" || true
                         trap - EXIT
 
                         echo "Generating backend coverage report..."
+
                         npx c8 report \
                           --reporter=text \
                           --reporter=lcov \
                           --reports-dir=coverage
 
                         test -s coverage/lcov.info
+
+                        echo "Backend coverage report generated successfully."
                     '''
                 }
             }
@@ -239,11 +252,13 @@ pipeline {
                     docker compose ps
 
                     echo "Verifying Frontend (NGINX)..."
+
                     curl -fsS -o /dev/null \
                       -w "Frontend HTTP Status: %{http_code}\\n" \
                       http://localhost/
 
                     echo "Verifying Backend API through NGINX Proxy..."
+
                     curl -fsS http://localhost/api/health
                     echo ""
                 '''
