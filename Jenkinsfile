@@ -3,12 +3,11 @@ pipeline {
     agent any
 
     triggers {
-        // Triggered automatically by GitHub Webhook
         githubPush()
     }
 
     options {
-        timeout(time: 30, unit: 'MINUTES')
+        timeout(time: 45, unit: 'MINUTES')
         buildDiscarder(logRotator(numToKeepStr: '10'))
         disableConcurrentBuilds()
         timestamps()
@@ -48,35 +47,136 @@ pipeline {
             }
         }
 
-        stage('Backend Tests') {
+        stage('Backend Tests & Coverage') {
             steps {
                 dir('backend') {
                     sh '''
-                        echo "Validating backend JavaScript syntax..."
-                        find src -name "*.js" -exec node --check {} +
-                        echo "Verifying Express app module..."
-                        NODE_ENV=test node -e "require('./src/app'); console.log('Express app loaded successfully');"
+                        set -eu
+
+                        echo "Preparing isolated backend coverage database..."
+
+                        MYSQL_HOST=$(docker inspect \
+                          -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' \
+                          codesentinel-mysql)
+
+                        if [ -z "$MYSQL_HOST" ]; then
+                            echo "MySQL container IP not found."
+                            exit 1
+                        fi
+
+                        docker exec \
+                          -e MYSQL_PWD="$DB_ROOT_PASSWORD" \
+                          codesentinel-mysql \
+                          mysql -uroot -e "
+                            CREATE DATABASE IF NOT EXISTS codesentinel_coverage;
+                            GRANT ALL PRIVILEGES ON codesentinel_coverage.* TO '${DB_USER}'@'%';
+                          "
+
+                        export DB_HOST="$MYSQL_HOST"
+                        export DB_NAME="codesentinel_coverage"
+                        export DB_PORT="3306"
+                        export PORT="5001"
+                        export NODE_ENV="test"
+                        export BASE_URL="http://127.0.0.1:5001/api"
+
+                        rm -rf coverage .nyc_output
+
+                        echo "Starting instrumented backend..."
+
+                        npx c8 \
+                          --all \
+                          --src src \
+                          --reporter=text \
+                          --reporter=lcov \
+                          --reports-dir=coverage \
+                          node src/server.js \
+                          > "$WORKSPACE/backend-coverage-server.log" 2>&1 &
+
+                        SERVER_PID=$!
+
+                        cleanup() {
+                            kill -TERM "$SERVER_PID" 2>/dev/null || true
+                            wait "$SERVER_PID" 2>/dev/null || true
+                        }
+
+                        trap cleanup EXIT
+
+                        READY=0
+
+                        for i in $(seq 1 40); do
+                            if curl -fsS "$BASE_URL/health" >/dev/null 2>&1; then
+                                READY=1
+                                break
+                            fi
+
+                            sleep 1
+                        done
+
+                        if [ "$READY" -ne 1 ]; then
+                            echo "Backend startup failed:"
+                            cat "$WORKSPACE/backend-coverage-server.log"
+                            exit 1
+                        fi
+
+                        echo "Running backend integration tests..."
+                        node test_api.js
+
+                        echo "Stopping instrumented backend..."
+                        kill -TERM "$SERVER_PID" 2>/dev/null || true
+                        wait "$SERVER_PID" || true
+                        trap - EXIT
+
+                        echo "Generating backend coverage report..."
+                        npx c8 report \
+                          --reporter=text \
+                          --reporter=lcov \
+                          --reports-dir=coverage
+
+                        test -s coverage/lcov.info
+                    '''
+                }
+            }
+        }
+
+        stage('Frontend Tests & Coverage') {
+            steps {
+                dir('frontend') {
+                    sh '''
+                        set -eu
+
+                        echo "Running frontend tests with coverage..."
+
+                        rm -rf coverage
+
+                        npm run coverage
+
+                        test -s coverage/lcov.info
                     '''
                 }
             }
         }
 
         stage('SonarQube Analysis') {
-    steps {
-        withSonarQubeEnv('SonarQube') {
-            script {
-                def scannerHome = tool 'SonarScanner'
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    script {
+                        def scannerHome = tool 'SonarScanner'
 
-                withEnv(["PATH+SONAR_SCANNER=${scannerHome}/bin"]) {
-                    sh '''
-                        sonar-scanner \
-                          -Dsonar.projectBaseDir="$WORKSPACE"
-                    '''
+                        withEnv(["PATH+SONAR_SCANNER=${scannerHome}/bin"]) {
+                            sh '''
+                                echo "Verifying coverage reports..."
+
+                                test -s backend/coverage/lcov.info
+                                test -s frontend/coverage/lcov.info
+
+                                sonar-scanner \
+                                  -Dsonar.projectBaseDir="$WORKSPACE"
+                            '''
+                        }
+                    }
                 }
             }
         }
-    }
-}
 
         stage('Frontend Build') {
             steps {
@@ -95,12 +195,17 @@ pipeline {
         stage('Docker Compose Deployment') {
             steps {
                 sh '''
-                    TOKEN=$(curl -s -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 60" || true)
+                    TOKEN=$(curl -s -X PUT \
+                      "http://169.254.169.254/latest/api/token" \
+                      -H "X-aws-ec2-metadata-token-ttl-seconds: 60" || true)
 
                     if [ -n "$TOKEN" ]; then
-                        EC2_IP=$(curl -s -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/public-ipv4 || true)
+                        EC2_IP=$(curl -s \
+                          -H "X-aws-ec2-metadata-token: $TOKEN" \
+                          http://169.254.169.254/latest/meta-data/public-ipv4 || true)
                     else
-                        EC2_IP=$(curl -s --connect-timeout 2 http://169.254.169.254/latest/meta-data/public-ipv4 || true)
+                        EC2_IP=$(curl -s --connect-timeout 2 \
+                          http://169.254.169.254/latest/meta-data/public-ipv4 || true)
                     fi
 
                     if [ -n "$EC2_IP" ]; then
@@ -134,7 +239,9 @@ pipeline {
                     docker compose ps
 
                     echo "Verifying Frontend (NGINX)..."
-                    curl -fsS -o /dev/null -w "Frontend HTTP Status: %{http_code}\\n" http://localhost/
+                    curl -fsS -o /dev/null \
+                      -w "Frontend HTTP Status: %{http_code}\\n" \
+                      http://localhost/
 
                     echo "Verifying Backend API through NGINX Proxy..."
                     curl -fsS http://localhost/api/health

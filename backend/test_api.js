@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost/api';
+const BASE_URL = process.env.BASE_URL || 'http://localhost/api';
 
 async function request(url, options = {}) {
   const fullUrl = url.startsWith('http') ? url : `${BASE_URL}${url}`;
