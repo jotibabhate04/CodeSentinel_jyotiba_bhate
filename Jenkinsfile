@@ -24,6 +24,7 @@ pipeline {
     }
 
     stages {
+
         stage('Git Checkout') {
             steps {
                 checkout scm
@@ -81,9 +82,9 @@ pipeline {
 
                         rm -rf coverage .nyc_output
 
-                        echo "Starting instrumented backend..."
+                        echo "Starting backend with c8 coverage..."
 
-                        npx c8 \
+                        ./node_modules/.bin/c8 \
                           --all \
                           --src src \
                           --reporter=text \
@@ -95,24 +96,31 @@ pipeline {
                         COVERAGE_PID=$!
 
                         cleanup() {
-                            SERVER_PID=$(pgrep -f '[n]ode src/server.js' | head -n 1 || true)
+                            echo "Cleaning up Jenkins coverage process..."
 
-                            if [ -n "$SERVER_PID" ]; then
-                                kill -TERM "$SERVER_PID" 2>/dev/null || true
+                            if kill -0 "$COVERAGE_PID" 2>/dev/null; then
+                                SERVER_PID=$(pgrep -P "$COVERAGE_PID" | head -n 1 || true)
+
+                                if [ -n "$SERVER_PID" ]; then
+                                    kill -TERM "$SERVER_PID" 2>/dev/null || true
+                                fi
+
+                                wait "$COVERAGE_PID" 2>/dev/null || true
                             fi
-
-                            wait "$COVERAGE_PID" 2>/dev/null || true
                         }
 
                         trap cleanup EXIT
 
                         READY=0
 
+                        echo "Waiting for backend startup..."
+
                         for i in $(seq 1 40); do
                             if curl -fsS "$BASE_URL/health" >/dev/null 2>&1; then
                                 READY=1
                                 break
                             fi
+
                             sleep 1
                         done
 
@@ -122,28 +130,34 @@ pipeline {
                             exit 1
                         fi
 
-                        echo "Running backend integration tests..."
+                        echo "Backend started successfully."
+
+                        echo "Running 23 backend integration tests..."
+
                         node test_api.js
 
-                        echo "Stopping backend gracefully..."
+                        echo "Stopping Jenkins coverage backend..."
 
-                        SERVER_PID=$(pgrep -f '[n]ode src/server.js' | head -n 1 || true)
+                        SERVER_PID=$(pgrep -P "$COVERAGE_PID" | head -n 1 || true)
 
                         if [ -n "$SERVER_PID" ]; then
-                            kill -TERM "$SERVER_PID"
+                            kill -TERM "$SERVER_PID" 2>/dev/null || true
                         fi
 
-                        wait "$COVERAGE_PID" || true
+                        wait "$COVERAGE_PID"
                         trap - EXIT
 
                         echo "Generating backend coverage report..."
 
-                        npx c8 report \
+                        ./node_modules/.bin/c8 report \
                           --reporter=text \
                           --reporter=lcov \
                           --reports-dir=coverage
 
-                        test -s coverage/lcov.info
+                        if [ ! -s coverage/lcov.info ]; then
+                            echo "Backend LCOV report is missing or empty."
+                            exit 1
+                        fi
 
                         echo "Backend coverage report generated successfully."
                     '''
@@ -163,7 +177,12 @@ pipeline {
 
                         npm run coverage
 
-                        test -s coverage/lcov.info
+                        if [ ! -s coverage/lcov.info ]; then
+                            echo "Frontend LCOV report is missing or empty."
+                            exit 1
+                        fi
+
+                        echo "Frontend coverage report generated successfully."
                     '''
                 }
             }
@@ -177,10 +196,14 @@ pipeline {
 
                         withEnv(["PATH+SONAR_SCANNER=${scannerHome}/bin"]) {
                             sh '''
-                                echo "Verifying coverage reports..."
+                                set -eu
+
+                                echo "Verifying backend and frontend coverage reports..."
 
                                 test -s backend/coverage/lcov.info
                                 test -s frontend/coverage/lcov.info
+
+                                echo "Starting SonarQube analysis..."
 
                                 sonar-scanner \
                                   -Dsonar.projectBaseDir="$WORKSPACE"
@@ -208,6 +231,8 @@ pipeline {
         stage('Docker Compose Deployment') {
             steps {
                 sh '''
+                    set -eu
+
                     TOKEN=$(curl -s -X PUT \
                       "http://169.254.169.254/latest/api/token" \
                       -H "X-aws-ec2-metadata-token-ttl-seconds: 60" || true)
@@ -235,32 +260,35 @@ pipeline {
         stage('Application Health Verification') {
             steps {
                 sh '''
-                    echo "Waiting for containers to pass Docker health checks..."
+                    set -eu
+
+                    echo "Waiting for application services..."
 
                     for i in $(seq 1 24); do
-                        HEALTHY_COUNT=$(docker compose ps --format json 2>/dev/null | grep -c '"Health":"healthy"' || true)
-
-                        if [ "$HEALTHY_COUNT" -ge 3 ]; then
-                            echo "All 3 services are healthy."
+                        if curl -fsS http://localhost/ >/dev/null 2>&1; then
                             break
                         fi
 
-                        echo "Waiting for services to become healthy ($i/24)..."
+                        echo "Waiting for frontend ($i/24)..."
                         sleep 5
                     done
 
+                    echo "Checking Docker containers..."
+
                     docker compose ps
 
-                    echo "Verifying Frontend (NGINX)..."
+                    echo "Verifying frontend..."
 
                     curl -fsS -o /dev/null \
                       -w "Frontend HTTP Status: %{http_code}\\n" \
                       http://localhost/
 
-                    echo "Verifying Backend API through NGINX Proxy..."
+                    echo "Verifying backend API..."
 
                     curl -fsS http://localhost/api/health
+
                     echo ""
+                    echo "Application health verification completed."
                 '''
             }
         }
