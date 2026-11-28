@@ -1,0 +1,211 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 620" width="1400" height="620" role="img" aria-labelledby="pipe-title pipe-desc">
+  <title id="pipe-title">CodeSentinel Automated CI/CD Pipeline Flow</title>
+  <desc id="pipe-desc">Sequential visualization of the CodeSentinel Jenkinsfile CI/CD pipeline stages from Git Push and Webhook trigger through Testing, SonarQube, Docker Build, Trivy Scans, Ansible Deployment, and Health Verification.</desc>
+
+  <defs>
+    <style>
+      .font-sans { font-family: 'Segoe UI', Inter, -apple-system, BlinkMacSystemFont, Roboto, sans-serif; }
+      .font-mono { font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace; }
+      .title { font-size: 22px; font-weight: 700; fill: #f8fafc; }
+      .subtitle { font-size: 13px; font-weight: 500; fill: #94a3b8; }
+      .stage-num { font-size: 11px; font-weight: 700; fill: #0f172a; }
+      .stage-title { font-size: 13px; font-weight: 700; fill: #f8fafc; }
+      .stage-sub { font-size: 11px; font-weight: 500; fill: #94a3b8; }
+      .post-title { font-size: 12px; font-weight: 700; fill: #cbd5e1; }
+      .flow-line {
+        fill: none;
+        stroke-width: 2.4;
+        stroke-linecap: round;
+        stroke-dasharray: 7 5;
+        animation: pipeDash 1.3s linear infinite;
+      }
+      @keyframes pipeDash {
+        to { stroke-dashoffset: -24; }
+      }
+    </style>
+
+    <linearGradient id="pipeBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0b1120"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="125%">
+      <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#020617" flood-opacity="0.5"/>
+    </filter>
+
+    <marker id="arrBlue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arrPurple" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#a78bfa"/>
+    </marker>
+    <marker id="arrAmber" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#fbbf24"/>
+    </marker>
+    <marker id="arrGreen" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+  </defs>
+
+  <rect width="1400" height="620" rx="16" fill="url(#pipeBg)"/>
+
+  <!-- Header -->
+  <g transform="translate(36, 28)">
+    <text x="0" y="22" class="font-sans title">CodeSentinel — Automated Jenkins CI/CD Pipeline</text>
+    <text x="0" y="42" class="font-sans subtitle">11 Jenkinsfile Stages + GitHub Webhook Trigger | Quality &amp; Security Gates | Automated Ansible Rollout</text>
+  </g>
+
+  <!-- ==================== ROW 1: TRIGGER & BUILD (LEFT TO RIGHT) ==================== -->
+  <!-- 01 Git Push -->
+  <g transform="translate(36, 102)" filter="url(#shadow)">
+    <rect width="230" height="106" rx="12" fill="#1e293b" stroke="#38bdf8" stroke-opacity="0.5"/>
+    <circle cx="22" cy="22" r="11" fill="#38bdf8"/>
+    <text x="22" y="26" text-anchor="middle" class="font-sans stage-num">01</text>
+    <text x="115" y="46" text-anchor="middle" class="font-sans stage-title">Git Push</text>
+    <text x="115" y="66" text-anchor="middle" class="font-mono stage-sub">git push origin main</text>
+    <text x="115" y="84" text-anchor="middle" class="font-sans stage-sub">Source Code Update</text>
+  </g>
+
+  <!-- 02 GitHub Webhook -->
+  <g transform="translate(310, 102)" filter="url(#shadow)">
+    <rect width="230" height="106" rx="12" fill="#1e293b" stroke="#38bdf8" stroke-opacity="0.5"/>
+    <circle cx="22" cy="22" r="11" fill="#38bdf8"/>
+    <text x="22" y="26" text-anchor="middle" class="font-sans stage-num">02</text>
+    <text x="115" y="46" text-anchor="middle" class="font-sans stage-title">GitHub Webhook</text>
+    <text x="115" y="66" text-anchor="middle" class="font-mono stage-sub">POST /github-webhook/</text>
+    <text x="115" y="84" text-anchor="middle" class="font-sans stage-sub">Instant Event Delivery</text>
+  </g>
+
+  <!-- 03 Jenkins Trigger & Checkout -->
+  <g transform="translate(584, 102)" filter="url(#shadow)">
+    <rect width="230" height="106" rx="12" fill="#1e293b" stroke="#a78bfa" stroke-opacity="0.5"/>
+    <circle cx="22" cy="22" r="11" fill="#a78bfa"/>
+    <text x="22" y="26" text-anchor="middle" class="font-sans stage-num">03</text>
+    <text x="115" y="46" text-anchor="middle" class="font-sans stage-title">Jenkins &amp; Git Checkout</text>
+    <text x="115" y="66" text-anchor="middle" class="font-mono stage-sub">githubPush() + scm</text>
+    <text x="115" y="84" text-anchor="middle" class="font-sans stage-sub">No Concurrent Builds</text>
+  </g>
+
+  <!-- 04 Dependency Installation -->
+  <g transform="translate(858, 102)" filter="url(#shadow)">
+    <rect width="230" height="106" rx="12" fill="#1e293b" stroke="#a78bfa" stroke-opacity="0.5"/>
+    <circle cx="22" cy="22" r="11" fill="#a78bfa"/>
+    <text x="22" y="26" text-anchor="middle" class="font-sans stage-num">04</text>
+    <text x="115" y="46" text-anchor="middle" class="font-sans stage-title">Dependency Install</text>
+    <text x="115" y="66" text-anchor="middle" class="font-mono stage-sub">backend &amp; frontend npm ci</text>
+    <text x="115" y="84" text-anchor="middle" class="font-sans stage-sub">Deterministic Lockfiles</text>
+  </g>
+
+  <!-- 05 Automated Testing -->
+  <g transform="translate(1132, 102)" filter="url(#shadow)">
+    <rect width="232" height="106" rx="12" fill="#1e293b" stroke="#a78bfa" stroke-opacity="0.5"/>
+    <circle cx="22" cy="22" r="11" fill="#a78bfa"/>
+    <text x="22" y="26" text-anchor="middle" class="font-sans stage-num">05</text>
+    <text x="116" y="46" text-anchor="middle" class="font-sans stage-title">Testing &amp; Coverage</text>
+    <text x="116" y="66" text-anchor="middle" class="font-mono stage-sub">c8 (23 API) + Vitest</text>
+    <text x="116" y="84" text-anchor="middle" class="font-sans stage-sub">Generates LCOV Reports</text>
+  </g>
+
+  <path d="M266 155 H308" class="flow-line" stroke="#38bdf8" marker-end="url(#arrBlue)"/>
+  <path d="M540 155 H582" class="flow-line" stroke="#a78bfa" marker-end="url(#arrPurple)"/>
+  <path d="M814 155 H856" class="flow-line" stroke="#a78bfa" marker-end="url(#arrPurple)"/>
+  <path d="M1088 155 H1130" class="flow-line" stroke="#a78bfa" marker-end="url(#arrPurple)"/>
+
+  <!-- Connector Row 1 -> Row 2 -->
+  <path d="M1248 208 V262" class="flow-line" stroke="#fbbf24" marker-end="url(#arrAmber)"/>
+
+  <!-- ==================== ROW 2: QUALITY, BUILD & SECURITY (RIGHT TO LEFT) ==================== -->
+  <!-- 06 SonarQube Analysis -->
+  <g transform="translate(1132, 264)" filter="url(#shadow)">
+    <rect width="232" height="106" rx="12" fill="#1e293b" stroke="#fbbf24" stroke-opacity="0.65"/>
+    <circle cx="22" cy="22" r="11" fill="#fbbf24"/>
+    <text x="22" y="26" text-anchor="middle" class="font-sans stage-num">06</text>
+    <text x="116" y="46" text-anchor="middle" class="font-sans stage-title">SonarQube Analysis</text>
+    <text x="116" y="66" text-anchor="middle" class="font-mono stage-sub">sonar-scanner + LCOV</text>
+    <text x="116" y="84" text-anchor="middle" class="font-sans stage-sub">Code Quality &amp; Smells</text>
+  </g>
+
+  <!-- 07 Frontend Build & Docker Build -->
+  <g transform="translate(858, 264)" filter="url(#shadow)">
+    <rect width="230" height="106" rx="12" fill="#1e293b" stroke="#38bdf8" stroke-opacity="0.5"/>
+    <circle cx="22" cy="22" r="11" fill="#38bdf8"/>
+    <text x="22" y="26" text-anchor="middle" class="font-sans stage-num">07</text>
+    <text x="115" y="46" text-anchor="middle" class="font-sans stage-title">Frontend &amp; Docker Build</text>
+    <text x="115" y="66" text-anchor="middle" class="font-mono stage-sub">Vite + compose build</text>
+    <text x="115" y="84" text-anchor="middle" class="font-sans stage-sub">--no-cache Images</text>
+  </g>
+
+  <!-- 08 Trivy Backend Scan -->
+  <g transform="translate(584, 264)" filter="url(#shadow)">
+    <rect width="230" height="106" rx="12" fill="#1e293b" stroke="#fbbf24" stroke-opacity="0.65"/>
+    <circle cx="22" cy="22" r="11" fill="#fbbf24"/>
+    <text x="22" y="26" text-anchor="middle" class="font-sans stage-num">08</text>
+    <text x="115" y="46" text-anchor="middle" class="font-sans stage-title">Trivy Backend Scan</text>
+    <text x="115" y="66" text-anchor="middle" class="font-mono stage-sub">codesentinel-backend</text>
+    <text x="115" y="84" text-anchor="middle" class="font-sans stage-sub">Fail on CRITICAL / HIGH</text>
+  </g>
+
+  <!-- 09 Trivy Frontend Scan -->
+  <g transform="translate(310, 264)" filter="url(#shadow)">
+    <rect width="230" height="106" rx="12" fill="#1e293b" stroke="#fbbf24" stroke-opacity="0.65"/>
+    <circle cx="22" cy="22" r="11" fill="#fbbf24"/>
+    <text x="22" y="26" text-anchor="middle" class="font-sans stage-num">09</text>
+    <text x="115" y="46" text-anchor="middle" class="font-sans stage-title">Trivy Frontend Scan</text>
+    <text x="115" y="66" text-anchor="middle" class="font-mono stage-sub">codesentinel-frontend</text>
+    <text x="115" y="84" text-anchor="middle" class="font-sans stage-sub">Fail on CRITICAL / HIGH</text>
+  </g>
+
+  <!-- 10 Ansible Deployment -->
+  <g transform="translate(36, 264)" filter="url(#shadow)">
+    <rect width="230" height="106" rx="12" fill="#1e293b" stroke="#34d399" stroke-opacity="0.65"/>
+    <circle cx="22" cy="22" r="11" fill="#34d399"/>
+    <text x="22" y="26" text-anchor="middle" class="font-sans stage-num">10</text>
+    <text x="115" y="46" text-anchor="middle" class="font-sans stage-title">Ansible Deployment</text>
+    <text x="115" y="66" text-anchor="middle" class="font-mono stage-sub">ansible-playbook deploy.yml</text>
+    <text x="115" y="84" text-anchor="middle" class="font-sans stage-sub">Docker Compose Rollout</text>
+  </g>
+
+  <path d="M1132 317 H1090" class="flow-line" stroke="#38bdf8" marker-end="url(#arrBlue)"/>
+  <path d="M858 317 H816" class="flow-line" stroke="#fbbf24" marker-end="url(#arrAmber)"/>
+  <path d="M584 317 H542" class="flow-line" stroke="#fbbf24" marker-end="url(#arrAmber)"/>
+  <path d="M310 317 H268" class="flow-line" stroke="#34d399" marker-end="url(#arrGreen)"/>
+
+  <!-- Connector Row 2 -> Row 3 -->
+  <path d="M151 370 V424" class="flow-line" stroke="#34d399" marker-end="url(#arrGreen)"/>
+
+  <!-- ==================== ROW 3: VERIFICATION & POST ACTIONS ==================== -->
+  <!-- 11 Health Check -->
+  <g transform="translate(36, 426)" filter="url(#shadow)">
+    <rect width="340" height="106" rx="12" fill="#1e293b" stroke="#34d399" stroke-opacity="0.7"/>
+    <circle cx="22" cy="22" r="11" fill="#34d399"/>
+    <text x="22" y="26" text-anchor="middle" class="font-sans stage-num">11</text>
+    <text x="170" y="44" text-anchor="middle" class="font-sans stage-title">Application Health Verification</text>
+    <text x="170" y="64" text-anchor="middle" class="font-mono stage-sub">docker compose ps</text>
+    <text x="170" y="82" text-anchor="middle" class="font-mono stage-sub">curl http://localhost/ &amp; /api/health</text>
+  </g>
+
+  <!-- 12 Deployment Result -->
+  <g transform="translate(430, 426)" filter="url(#shadow)">
+    <rect width="340" height="106" rx="12" fill="#064e3b" fill-opacity="0.45" stroke="#34d399" stroke-width="1.5"/>
+    <circle cx="22" cy="22" r="11" fill="#34d399"/>
+    <text x="22" y="26" text-anchor="middle" class="font-sans stage-num">12</text>
+    <text x="170" y="44" text-anchor="middle" class="font-sans stage-title" fill="#6ee7b7">Live Deployment Result</text>
+    <text x="170" y="64" text-anchor="middle" class="font-sans stage-sub" fill="#d1fae5">NGINX :80 -&gt; React + Express + MySQL</text>
+    <text x="170" y="82" text-anchor="middle" class="font-mono stage-sub" fill="#a7f3d0">Pipeline Succeeded</text>
+  </g>
+
+  <!-- Post Pipeline Actions -->
+  <g transform="translate(824, 426)" filter="url(#shadow)">
+    <rect width="540" height="106" rx="12" fill="#111827" stroke="#334155"/>
+    <text x="20" y="28" class="font-sans post-title">Jenkinsfile Post-Build Actions</text>
+    <text x="20" y="50" class="font-mono stage-sub">success : Log live deployment confirmation</text>
+    <text x="20" y="69" class="font-mono stage-sub">failure : docker compose logs --tail=50</text>
+    <text x="20" y="88" class="font-mono stage-sub">always  : docker image prune -f (workspace cleanup)</text>
+  </g>
+
+  <path d="M376 479 H428" class="flow-line" stroke="#34d399" marker-end="url(#arrGreen)"/>
+  <path d="M770 479 H822" class="flow-line" stroke="#38bdf8" marker-end="url(#arrBlue)"/>
+
+  <!-- Footer Note -->
+  <text x="36" y="576" class="font-sans stage-sub">All pipeline stages are defined declaratively in Jenkinsfile (timeout: 45m, buildDiscarder: 10 builds, disableConcurrentBuilds).</text>
+</svg>

@@ -1,0 +1,385 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 880" width="1400" height="880" role="img" aria-labelledby="arch-title arch-desc">
+  <title id="arch-title">CodeSentinel Automated DevSecOps Architecture</title>
+  <desc id="arch-desc">End-to-end automated DevSecOps architecture from Developer and GitHub Webhook through Jenkins CI/CD, SonarQube, Trivy, Docker Compose, and Ansible deployment onto AWS EC2 Ubuntu with NGINX, React, Express, and MySQL 8.0.</desc>
+
+  <defs>
+    <style>
+      .font-sans { font-family: 'Segoe UI', Inter, -apple-system, BlinkMacSystemFont, Roboto, sans-serif; }
+      .font-mono { font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace; }
+      .title { font-size: 24px; font-weight: 700; fill: #f8fafc; letter-spacing: -0.3px; }
+      .subtitle { font-size: 13px; font-weight: 500; fill: #94a3b8; }
+      .zone-label { font-size: 11px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; }
+      .node-title { font-size: 13px; font-weight: 700; fill: #f8fafc; }
+      .node-sub { font-size: 11px; font-weight: 500; fill: #94a3b8; }
+      .badge-num { font-size: 10px; font-weight: 700; fill: #0f172a; }
+      .flow-line {
+        fill: none;
+        stroke-width: 2.2;
+        stroke-linecap: round;
+        stroke-dasharray: 7 5;
+        animation: flowDash 1.4s linear infinite;
+      }
+      .flow-solid {
+        fill: none;
+        stroke-width: 2;
+        stroke-linecap: round;
+      }
+      @keyframes flowDash {
+        to { stroke-dashoffset: -24; }
+      }
+    </style>
+
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0b1120"/>
+      <stop offset="50%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#0b1324"/>
+    </linearGradient>
+
+    <filter id="cardShadow" x="-10%" y="-10%" width="120%" height="125%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#020617" flood-opacity="0.55"/>
+    </filter>
+
+    <marker id="arrowBlue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arrowPurple" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#a78bfa"/>
+    </marker>
+    <marker id="arrowAmber" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#fbbf24"/>
+    </marker>
+    <marker id="arrowGreen" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399"/>
+    </marker>
+    <marker id="arrowSlate" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#64748b"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1400" height="880" rx="16" fill="url(#bgGrad)"/>
+
+  <!-- Subtle Grid -->
+  <g stroke="#1e293b" stroke-width="0.6" opacity="0.45">
+    <path d="M0 110 H1400 M0 220 H1400 M0 330 H1400 M0 440 H1400 M0 550 H1400 M0 660 H1400 M0 770 H1400"/>
+    <path d="M140 0 V880 M280 0 V880 M420 0 V880 M560 0 V880 M700 0 V880 M840 0 V880 M980 0 V880 M1120 0 V880 M1260 0 V880"/>
+  </g>
+
+  <!-- Header -->
+  <g transform="translate(36, 32)">
+    <rect x="0" y="2" width="42" height="42" rx="10" fill="#0ea5e9" fill-opacity="0.16" stroke="#38bdf8" stroke-width="1.5"/>
+    <path d="M21 10 L32 15 V23 C32 29.5 27.2 34.8 21 37 C14.8 34.8 10 29.5 10 23 V15 Z" fill="none" stroke="#38bdf8" stroke-width="2"/>
+    <path d="M16 23 L19.5 26.5 L26.5 19.5" fill="none" stroke="#34d399" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="56" y="22" class="font-sans title">CodeSentinel — Automated DevSecOps System Architecture</text>
+    <text x="56" y="42" class="font-sans subtitle">End-to-End CI/CD Pipeline, Static &amp; Container Security Gates, Ansible Automation, and 3-Tier AWS EC2 Runtime</text>
+  </g>
+
+  <!-- Legend -->
+  <g transform="translate(1030, 38)" class="font-sans">
+    <rect x="0" y="0" width="334" height="36" rx="8" fill="#111827" stroke="#1e293b"/>
+    <line x1="16" y1="18" x2="42" y2="18" class="flow-line" stroke="#38bdf8"/>
+    <text x="50" y="22" class="node-sub">CI/CD Flow</text>
+    <line x1="126" y1="18" x2="152" y2="18" class="flow-line" stroke="#fbbf24"/>
+    <text x="160" y="22" class="node-sub">Security Gate</text>
+    <line x1="244" y1="18" x2="270" y2="18" class="flow-line" stroke="#34d399"/>
+    <text x="278" y="22" class="node-sub">Live Traffic</text>
+  </g>
+
+  <!-- ==================== ZONE 1: SOURCE CONTROL ==================== -->
+  <g transform="translate(36, 102)">
+    <rect width="380" height="175" rx="14" fill="#0f172a" fill-opacity="0.88" stroke="#38bdf8" stroke-opacity="0.35" stroke-width="1.5"/>
+    <text x="18" y="26" class="font-sans zone-label" fill="#38bdf8">1. Source Control &amp; Trigger</text>
+
+    <!-- Developer -->
+    <g transform="translate(18, 44)" filter="url(#cardShadow)">
+      <rect width="102" height="106" rx="10" fill="#1e293b" stroke="#334155"/>
+      <circle cx="20" cy="20" r="10" fill="#38bdf8"/>
+      <text x="20" y="24" text-anchor="middle" class="font-sans badge-num">01</text>
+      <circle cx="51" cy="40" r="10" fill="none" stroke="#e2e8f0" stroke-width="1.8"/>
+      <path d="M35 64 C35 55 67 55 67 64" fill="none" stroke="#e2e8f0" stroke-width="1.8" stroke-linecap="round"/>
+      <text x="51" y="83" text-anchor="middle" class="font-sans node-title">Developer</text>
+      <text x="51" y="98" text-anchor="middle" class="font-mono node-sub">git push main</text>
+    </g>
+
+    <!-- GitHub Repo -->
+    <g transform="translate(142, 44)" filter="url(#cardShadow)">
+      <rect width="106" height="106" rx="10" fill="#1e293b" stroke="#334155"/>
+      <circle cx="20" cy="20" r="10" fill="#38bdf8"/>
+      <text x="20" y="24" text-anchor="middle" class="font-sans badge-num">02</text>
+      <circle cx="53" cy="44" r="13" fill="none" stroke="#f8fafc" stroke-width="1.8"/>
+      <path d="M48 56 V49 C44 49 44 43 46 41 C45 39 46 37 46 37 C48 37 50 38 50 38 C52 37.5 54 37.5 56 38 C56 38 58 37 60 37 C60 37 61 39 60 41 C62 43 62 49 58 49 V56" fill="none" stroke="#f8fafc" stroke-width="1.5"/>
+      <text x="53" y="83" text-anchor="middle" class="font-sans node-title">GitHub Repo</text>
+      <text x="53" y="98" text-anchor="middle" class="font-mono node-sub">main branch</text>
+    </g>
+
+    <!-- GitHub Webhook -->
+    <g transform="translate(270, 44)" filter="url(#cardShadow)">
+      <rect width="94" height="106" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-opacity="0.5"/>
+      <circle cx="20" cy="20" r="10" fill="#38bdf8"/>
+      <text x="20" y="24" text-anchor="middle" class="font-sans badge-num">03</text>
+      <path d="M47 34 L39 48 H48 L45 60 L56 44 H47 Z" fill="#38bdf8"/>
+      <text x="47" y="83" text-anchor="middle" class="font-sans node-title">Webhook</text>
+      <text x="47" y="98" text-anchor="middle" class="font-mono node-sub">githubPush()</text>
+    </g>
+
+    <path d="M120 97 H140" class="flow-line" stroke="#38bdf8" marker-end="url(#arrowBlue)"/>
+    <path d="M248 97 H268" class="flow-line" stroke="#38bdf8" marker-end="url(#arrowBlue)"/>
+  </g>
+
+  <!-- ==================== ZONE 2: CI/CD & CODE QUALITY ==================== -->
+  <g transform="translate(442, 102)">
+    <rect width="922" height="175" rx="14" fill="#0f172a" fill-opacity="0.88" stroke="#a78bfa" stroke-opacity="0.35" stroke-width="1.5"/>
+    <text x="18" y="26" class="font-sans zone-label" fill="#a78bfa">2. Jenkins CI/CD Pipeline — Build, Test &amp; Static Analysis</text>
+
+    <!-- Jenkins Trigger & Checkout -->
+    <g transform="translate(18, 44)" filter="url(#cardShadow)">
+      <rect width="146" height="106" rx="10" fill="#1e293b" stroke="#334155"/>
+      <circle cx="20" cy="20" r="10" fill="#a78bfa"/>
+      <text x="20" y="24" text-anchor="middle" class="font-sans badge-num">04</text>
+      <text x="73" y="45" text-anchor="middle" class="font-sans node-title">Jenkins + Checkout</text>
+      <text x="73" y="65" text-anchor="middle" class="font-mono node-sub">checkout scm</text>
+      <text x="73" y="82" text-anchor="middle" class="font-mono node-sub">git rev-parse HEAD</text>
+      <text x="73" y="98" text-anchor="middle" class="font-sans node-sub" fill="#a78bfa">Stage 1</text>
+    </g>
+
+    <!-- Dependency Install -->
+    <g transform="translate(188, 44)" filter="url(#cardShadow)">
+      <rect width="152" height="106" rx="10" fill="#1e293b" stroke="#334155"/>
+      <circle cx="20" cy="20" r="10" fill="#a78bfa"/>
+      <text x="20" y="24" text-anchor="middle" class="font-sans badge-num">05</text>
+      <text x="76" y="45" text-anchor="middle" class="font-sans node-title">Dependencies</text>
+      <text x="76" y="65" text-anchor="middle" class="font-mono node-sub">backend: npm ci</text>
+      <text x="76" y="82" text-anchor="middle" class="font-mono node-sub">frontend: npm ci</text>
+      <text x="76" y="98" text-anchor="middle" class="font-sans node-sub">Stages 2 &amp; 3</text>
+    </g>
+
+    <!-- Automated Testing & Coverage -->
+    <g transform="translate(364, 44)" filter="url(#cardShadow)">
+      <rect width="208" height="106" rx="10" fill="#1e293b" stroke="#334155"/>
+      <circle cx="20" cy="20" r="10" fill="#a78bfa"/>
+      <text x="20" y="24" text-anchor="middle" class="font-sans badge-num">06</text>
+      <text x="104" y="45" text-anchor="middle" class="font-sans node-title">Automated Tests &amp; LCOV</text>
+      <text x="104" y="65" text-anchor="middle" class="font-mono node-sub">Backend: c8 + 23 API tests</text>
+      <text x="104" y="82" text-anchor="middle" class="font-mono node-sub">Frontend: Vitest coverage</text>
+      <text x="104" y="98" text-anchor="middle" class="font-sans node-sub">Stages 4 &amp; 5</text>
+    </g>
+
+    <!-- SonarQube -->
+    <g transform="translate(596, 44)" filter="url(#cardShadow)">
+      <rect width="152" height="106" rx="10" fill="#1e293b" stroke="#fbbf24" stroke-opacity="0.55"/>
+      <circle cx="20" cy="20" r="10" fill="#fbbf24"/>
+      <text x="20" y="24" text-anchor="middle" class="font-sans badge-num">07</text>
+      <text x="76" y="45" text-anchor="middle" class="font-sans node-title">SonarQube</text>
+      <text x="76" y="65" text-anchor="middle" class="font-mono node-sub">sonar-scanner</text>
+      <text x="76" y="82" text-anchor="middle" class="font-mono node-sub">LCOV Quality Gate</text>
+      <text x="76" y="98" text-anchor="middle" class="font-sans node-sub">Stage 6</text>
+    </g>
+
+    <!-- Frontend Vite Build -->
+    <g transform="translate(772, 44)" filter="url(#cardShadow)">
+      <rect width="132" height="106" rx="10" fill="#1e293b" stroke="#334155"/>
+      <circle cx="20" cy="20" r="10" fill="#a78bfa"/>
+      <text x="20" y="24" text-anchor="middle" class="font-sans badge-num">08</text>
+      <text x="66" y="45" text-anchor="middle" class="font-sans node-title">Frontend Build</text>
+      <text x="66" y="65" text-anchor="middle" class="font-mono node-sub">npm run build</text>
+      <text x="66" y="82" text-anchor="middle" class="font-mono node-sub">VITE_API_BASE=/api</text>
+      <text x="66" y="98" text-anchor="middle" class="font-sans node-sub">Stage 7</text>
+    </g>
+
+    <path d="M164 97 H186" class="flow-line" stroke="#a78bfa" marker-end="url(#arrowPurple)"/>
+    <path d="M340 97 H362" class="flow-line" stroke="#a78bfa" marker-end="url(#arrowPurple)"/>
+    <path d="M572 97 H594" class="flow-line" stroke="#fbbf24" marker-end="url(#arrowAmber)"/>
+    <path d="M748 97 H770" class="flow-line" stroke="#a78bfa" marker-end="url(#arrowPurple)"/>
+  </g>
+
+  <!-- Connector Zone 1 -> Zone 2 -->
+  <path d="M400 199 H458" class="flow-line" stroke="#38bdf8" marker-end="url(#arrowBlue)"/>
+
+  <!-- ==================== ZONE 3: CONTAINERIZATION & SECURITY ==================== -->
+  <g transform="translate(36, 314)">
+    <rect width="630" height="175" rx="14" fill="#0f172a" fill-opacity="0.88" stroke="#fbbf24" stroke-opacity="0.35" stroke-width="1.5"/>
+    <text x="18" y="26" class="font-sans zone-label" fill="#fbbf24">3. Containerization &amp; Trivy Vulnerability Gates</text>
+
+    <!-- Docker Build -->
+    <g transform="translate(18, 44)" filter="url(#cardShadow)">
+      <rect width="175" height="106" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-opacity="0.45"/>
+      <circle cx="20" cy="20" r="10" fill="#38bdf8"/>
+      <text x="20" y="24" text-anchor="middle" class="font-sans badge-num">09</text>
+      <text x="88" y="45" text-anchor="middle" class="font-sans node-title">Docker Image Build</text>
+      <text x="88" y="65" text-anchor="middle" class="font-mono node-sub">docker compose build</text>
+      <text x="88" y="82" text-anchor="middle" class="font-mono node-sub">--no-cache (Alpine)</text>
+      <text x="88" y="98" text-anchor="middle" class="font-sans node-sub">Stage 8</text>
+    </g>
+
+    <!-- Trivy Backend Scan -->
+    <g transform="translate(222, 44)" filter="url(#cardShadow)">
+      <rect width="182" height="106" rx="10" fill="#1e293b" stroke="#fbbf24" stroke-opacity="0.6"/>
+      <circle cx="20" cy="20" r="10" fill="#fbbf24"/>
+      <text x="20" y="24" text-anchor="middle" class="font-sans badge-num">10</text>
+      <text x="91" y="45" text-anchor="middle" class="font-sans node-title">Trivy Backend Scan</text>
+      <text x="91" y="65" text-anchor="middle" class="font-mono node-sub">codesentinel-backend</text>
+      <text x="91" y="82" text-anchor="middle" class="font-mono node-sub">CRITICAL,HIGH -&gt; exit 1</text>
+      <text x="91" y="98" text-anchor="middle" class="font-sans node-sub">Stage 9a</text>
+    </g>
+
+    <!-- Trivy Frontend Scan -->
+    <g transform="translate(432, 44)" filter="url(#cardShadow)">
+      <rect width="180" height="106" rx="10" fill="#1e293b" stroke="#fbbf24" stroke-opacity="0.6"/>
+      <circle cx="20" cy="20" r="10" fill="#fbbf24"/>
+      <text x="20" y="24" text-anchor="middle" class="font-sans badge-num">11</text>
+      <text x="90" y="45" text-anchor="middle" class="font-sans node-title">Trivy Frontend Scan</text>
+      <text x="90" y="65" text-anchor="middle" class="font-mono node-sub">codesentinel-frontend</text>
+      <text x="90" y="82" text-anchor="middle" class="font-mono node-sub">CRITICAL,HIGH -&gt; exit 1</text>
+      <text x="90" y="98" text-anchor="middle" class="font-sans node-sub">Stage 9b</text>
+    </g>
+
+    <path d="M193 97 H220" class="flow-line" stroke="#fbbf24" marker-end="url(#arrowAmber)"/>
+    <path d="M404 97 H430" class="flow-line" stroke="#fbbf24" marker-end="url(#arrowAmber)"/>
+  </g>
+
+  <!-- Connector Zone 2 (Stage 7) -> Zone 3 (Stage 8) -->
+  <path d="M1280 252 V296 H142 V356" class="flow-line" stroke="#a78bfa" marker-end="url(#arrowPurple)"/>
+
+  <!-- ==================== ZONE 4: AUTOMATED DEPLOYMENT ==================== -->
+  <g transform="translate(692, 314)">
+    <rect width="672" height="175" rx="14" fill="#0f172a" fill-opacity="0.88" stroke="#34d399" stroke-opacity="0.35" stroke-width="1.5"/>
+    <text x="18" y="26" class="font-sans zone-label" fill="#34d399">4. Configuration Management &amp; Automated Deployment</text>
+
+    <!-- Ansible Playbook -->
+    <g transform="translate(18, 44)" filter="url(#cardShadow)">
+      <rect width="202" height="106" rx="10" fill="#1e293b" stroke="#34d399" stroke-opacity="0.5"/>
+      <circle cx="20" cy="20" r="10" fill="#34d399"/>
+      <text x="20" y="24" text-anchor="middle" class="font-sans badge-num">12</text>
+      <text x="101" y="45" text-anchor="middle" class="font-sans node-title">Ansible Playbook</text>
+      <text x="101" y="65" text-anchor="middle" class="font-mono node-sub">deploy.yml (local)</text>
+      <text x="101" y="82" text-anchor="middle" class="font-mono node-sub">IMDSv2 EC2 IP -&gt; CORS</text>
+      <text x="101" y="98" text-anchor="middle" class="font-sans node-sub">Stage 10</text>
+    </g>
+
+    <!-- Docker Compose Up -->
+    <g transform="translate(246, 44)" filter="url(#cardShadow)">
+      <rect width="194" height="106" rx="10" fill="#1e293b" stroke="#34d399" stroke-opacity="0.5"/>
+      <circle cx="20" cy="20" r="10" fill="#34d399"/>
+      <text x="20" y="24" text-anchor="middle" class="font-sans badge-num">13</text>
+      <text x="97" y="45" text-anchor="middle" class="font-sans node-title">Docker Compose</text>
+      <text x="97" y="65" text-anchor="middle" class="font-mono node-sub">up -d --remove-orphans</text>
+      <text x="97" y="82" text-anchor="middle" class="font-mono node-sub">codesentinel-network</text>
+      <text x="97" y="98" text-anchor="middle" class="font-sans node-sub">Container Orchestration</text>
+    </g>
+
+    <!-- Health Verification -->
+    <g transform="translate(466, 44)" filter="url(#cardShadow)">
+      <rect width="188" height="106" rx="10" fill="#1e293b" stroke="#34d399" stroke-opacity="0.5"/>
+      <circle cx="20" cy="20" r="10" fill="#34d399"/>
+      <text x="20" y="24" text-anchor="middle" class="font-sans badge-num">14</text>
+      <text x="94" y="45" text-anchor="middle" class="font-sans node-title">Health Verification</text>
+      <text x="94" y="65" text-anchor="middle" class="font-mono node-sub">GET http://localhost/</text>
+      <text x="94" y="82" text-anchor="middle" class="font-mono node-sub">GET /api/health (200)</text>
+      <text x="94" y="98" text-anchor="middle" class="font-sans node-sub">Stage 11</text>
+    </g>
+
+    <path d="M220 97 H244" class="flow-line" stroke="#34d399" marker-end="url(#arrowGreen)"/>
+    <path d="M440 97 H464" class="flow-line" stroke="#34d399" marker-end="url(#arrowGreen)"/>
+  </g>
+
+  <!-- Connector Zone 3 -> Zone 4 -->
+  <path d="M648 411 H708" class="flow-line" stroke="#fbbf24" marker-end="url(#arrowAmber)"/>
+
+  <!-- ==================== ZONE 5: AWS EC2 PRODUCTION RUNTIME ==================== -->
+  <g transform="translate(36, 526)">
+    <rect width="980" height="318" rx="14" fill="#0f172a" fill-opacity="0.92" stroke="#34d399" stroke-opacity="0.45" stroke-width="1.6"/>
+    <text x="18" y="28" class="font-sans zone-label" fill="#34d399">5. AWS EC2 Ubuntu Server — 3-Tier Dockerized Production Runtime</text>
+
+    <!-- External User -->
+    <g transform="translate(20, 96)" filter="url(#cardShadow)">
+      <rect width="128" height="132" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-opacity="0.5"/>
+      <circle cx="64" cy="40" r="16" fill="none" stroke="#38bdf8" stroke-width="2"/>
+      <path d="M48 40 H80 M64 24 C70 32 70 48 64 56 M64 24 C58 32 58 48 64 56" fill="none" stroke="#38bdf8" stroke-width="1.4"/>
+      <text x="64" y="80" text-anchor="middle" class="font-sans node-title">End Users</text>
+      <text x="64" y="98" text-anchor="middle" class="font-mono node-sub">HTTP :80</text>
+      <text x="64" y="115" text-anchor="middle" class="font-sans node-sub">EC2 Security Group</text>
+    </g>
+
+    <!-- Docker Bridge Network Container -->
+    <rect x="186" y="48" width="772" height="248" rx="12" fill="#0b1220" stroke="#334155" stroke-dasharray="6 4" stroke-width="1.5"/>
+    <text x="204" y="70" class="font-mono node-sub" fill="#38bdf8">Docker Bridge Network: codesentinel-network</text>
+
+    <!-- NGINX + React Frontend Container -->
+    <g transform="translate(208, 92)" filter="url(#cardShadow)">
+      <rect width="236" height="176" rx="10" fill="#1e293b" stroke="#34d399" stroke-opacity="0.6"/>
+      <rect x="12" y="12" width="212" height="26" rx="6" fill="#064e3b"/>
+      <text x="118" y="29" text-anchor="middle" class="font-sans node-title" fill="#6ee7b7">codesentinel-frontend (:80)</text>
+      <text x="118" y="58" text-anchor="middle" class="font-sans node-title">NGINX Reverse Proxy</text>
+      <text x="118" y="76" text-anchor="middle" class="font-mono node-sub">/ -&gt; React 18 + Vite SPA</text>
+      <text x="118" y="94" text-anchor="middle" class="font-mono node-sub">/api/ -&gt; proxy_pass :5000</text>
+      <text x="118" y="114" text-anchor="middle" class="font-sans node-sub">Gzip + Security Headers</text>
+      <text x="118" y="132" text-anchor="middle" class="font-sans node-sub">6M Static Asset Cache</text>
+      <text x="118" y="158" text-anchor="middle" class="font-mono node-sub" fill="#34d399">nginx:stable-alpine</text>
+    </g>
+
+    <!-- Backend API Container -->
+    <g transform="translate(478, 92)" filter="url(#cardShadow)">
+      <rect width="224" height="176" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-opacity="0.6"/>
+      <rect x="12" y="12" width="200" height="26" rx="6" fill="#0c4a6e"/>
+      <text x="112" y="29" text-anchor="middle" class="font-sans node-title" fill="#7dd3fc">codesentinel-backend (:5000)</text>
+      <text x="112" y="58" text-anchor="middle" class="font-sans node-title">Node.js 20 + Express API</text>
+      <text x="112" y="76" text-anchor="middle" class="font-mono node-sub">/api/auth/* | /api/tasks/*</text>
+      <text x="112" y="94" text-anchor="middle" class="font-mono node-sub">JWT + bcryptjs + Helmet</text>
+      <text x="112" y="114" text-anchor="middle" class="font-sans node-sub">express-validator + CORS</text>
+      <text x="112" y="132" text-anchor="middle" class="font-sans node-sub">Non-root USER node</text>
+      <text x="112" y="158" text-anchor="middle" class="font-mono node-sub" fill="#38bdf8">node:20-alpine</text>
+    </g>
+
+    <!-- MySQL 8.0 Container -->
+    <g transform="translate(736, 92)" filter="url(#cardShadow)">
+      <rect width="202" height="130" rx="10" fill="#1e293b" stroke="#a78bfa" stroke-opacity="0.6"/>
+      <rect x="12" y="12" width="178" height="26" rx="6" fill="#3b0764"/>
+      <text x="101" y="29" text-anchor="middle" class="font-sans node-title" fill="#d8b4fe">codesentinel-mysql (:3306)</text>
+      <text x="101" y="58" text-anchor="middle" class="font-sans node-title">MySQL 8.0 Database</text>
+      <text x="101" y="78" text-anchor="middle" class="font-mono node-sub">DB: codesentinel_db</text>
+      <text x="101" y="96" text-anchor="middle" class="font-mono node-sub">Tables: users, tasks</text>
+      <text x="101" y="114" text-anchor="middle" class="font-sans node-sub">Internal Network Only</text>
+    </g>
+
+    <!-- Persistent Volume -->
+    <g transform="translate(736, 236)">
+      <rect width="202" height="44" rx="8" fill="#111827" stroke="#a78bfa" stroke-opacity="0.5"/>
+      <text x="101" y="20" text-anchor="middle" class="font-sans node-title">Persistent Volume</text>
+      <text x="101" y="36" text-anchor="middle" class="font-mono node-sub">codesentinel_mysql_data</text>
+    </g>
+
+    <!-- Runtime Traffic Arrows -->
+    <path d="M148 162 H206" class="flow-line" stroke="#34d399" marker-end="url(#arrowGreen)"/>
+    <path d="M444 180 H476" class="flow-line" stroke="#34d399" marker-end="url(#arrowGreen)"/>
+    <path d="M702 162 H734" class="flow-line" stroke="#a78bfa" marker-end="url(#arrowPurple)"/>
+    <path d="M837 222 V234" class="flow-solid" stroke="#a78bfa" marker-end="url(#arrowPurple)"/>
+  </g>
+
+  <!-- Connector Zone 4 (Ansible) -> Zone 5 (AWS EC2) -->
+  <path d="M936 489 V524" class="flow-line" stroke="#34d399" marker-end="url(#arrowGreen)"/>
+
+  <!-- ==================== ZONE 6: TERRAFORM IaC ==================== -->
+  <g transform="translate(1040, 526)">
+    <rect width="324" height="318" rx="14" fill="#0f172a" fill-opacity="0.92" stroke="#64748b" stroke-opacity="0.6" stroke-width="1.5"/>
+    <text x="18" y="28" class="font-sans zone-label" fill="#cbd5e1">6. Terraform IaC (Standalone)</text>
+
+    <g transform="translate(20, 48)" filter="url(#cardShadow)">
+      <rect width="284" height="106" rx="10" fill="#1e293b" stroke="#475569"/>
+      <text x="142" y="28" text-anchor="middle" class="font-sans node-title">infra/terraform/main.tf</text>
+      <text x="142" y="48" text-anchor="middle" class="font-mono node-sub">Terraform &gt;= 1.5.0 | AWS &gt;= 5.0</text>
+      <text x="142" y="68" text-anchor="middle" class="font-mono node-sub">Region: us-east-1</text>
+      <text x="142" y="88" text-anchor="middle" class="font-sans node-sub">Data Source: Existing EC2 Instance</text>
+    </g>
+
+    <g transform="translate(20, 178)" filter="url(#cardShadow)">
+      <rect width="284" height="118" rx="10" fill="#1e293b" stroke="#475569"/>
+      <text x="142" y="28" text-anchor="middle" class="font-sans node-title">AWS S3 Artifacts Bucket</text>
+      <text x="142" y="48" text-anchor="middle" class="font-mono node-sub">codesentinel-artifacts-&lt;acct&gt;</text>
+      <text x="142" y="68" text-anchor="middle" class="font-sans node-sub">Versioning Enabled + AES256 SSE</text>
+      <text x="142" y="86" text-anchor="middle" class="font-sans node-sub">Public Access Blocked (All 4 flags)</text>
+      <text x="142" y="104" text-anchor="middle" class="font-sans node-sub">Lifecycle: 90d expire / 30d noncurrent</text>
+    </g>
+
+    <path d="M162 154 V176" class="flow-solid" stroke="#64748b" marker-end="url(#arrowSlate)"/>
+  </g>
+</svg>
