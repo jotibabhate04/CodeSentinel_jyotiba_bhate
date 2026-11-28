@@ -1,4 +1,4 @@
-# CodeSentinel | Enterprise Three-Tier Task Manager
+README.md# CodeSentinel | Enterprise Three-Tier Task Manager
 
 [![Node.js](https://img.shields.io/badge/Node.js-v18%2B-green?logo=node.js)](https://nodejs.org/)
 [![React](https://img.shields.io/badge/React-v18-blue?logo=react)](https://react.dev/)
@@ -338,6 +338,132 @@ npm test --prefix backend
 - **JWT Protection:** Signed tokens verified on every private request with expiration enforcement.
 - **HTTP Security Headers:** `helmet` enabled to prevent clickjacking, MIME sniffing, and XSS attacks.
 - **Input Sanitization:** `express-validator` validates and normalizes all user input before database execution.
-# Webhook Test
-Webhook testing again
-Testing Automatic Jenkins CI/CD
+
+---
+
+## ☁️ DevOps, CI/CD & AWS Deployment
+
+CodeSentinel uses an automated CI/CD workflow to build, test, scan, and deploy the application on an AWS EC2 instance.
+
+### DevOps Technology Stack
+
+| Tool | Purpose |
+|---|---|
+| AWS EC2 | Application hosting |
+| Docker | Application containerization |
+| Docker Compose | Multi-container orchestration |
+| Jenkins | CI/CD pipeline automation |
+| GitHub Webhooks | Automatic pipeline triggering |
+| SonarQube | Code quality analysis |
+| Trivy | Docker image vulnerability scanning |
+| Ansible | Deployment automation |
+| Terraform | Infrastructure as Code (IaC) |
+
+### CI/CD Pipeline Architecture
+
+```text
+Developer
+    |
+    | Git Push
+    v
+GitHub Repository
+    |
+    | GitHub Webhook
+    v
+Jenkins CI/CD Pipeline
+    |
+    +--> Git Checkout
+    |
+    +--> Backend Dependency Installation
+    |
+    +--> Frontend Dependency Installation
+    |
+    +--> Backend Tests & Coverage
+    |
+    +--> Frontend Tests & Coverage
+    |
+    +--> SonarQube Analysis
+    |
+    +--> Frontend Build
+    |
+    +--> Docker Image Build
+    |
+    +--> Trivy Security Scan
+    |
+    +--> Ansible Deployment
+    |
+    +--> Application Health Verification
+    |
+    v
+AWS EC2 Instance
+    |
+    +--> Frontend Container
+    +--> Backend Container
+    +--> MySQL Container
+```
+
+### Jenkins CI/CD Pipeline Stages
+
+The Jenkins pipeline automates the following stages:
+
+1. **Git Checkout:** Retrieves the latest source code from GitHub.
+2. **Backend Dependency Installation:** Installs backend Node.js dependencies.
+3. **Frontend Dependency Installation:** Installs frontend Node.js dependencies.
+4. **Backend Tests & Coverage:** Executes backend tests and coverage checks.
+5. **Frontend Tests & Coverage:** Executes frontend tests and coverage checks.
+6. **SonarQube Analysis:** Performs static code quality analysis.
+7. **Frontend Build:** Generates the production frontend build using Vite.
+8. **Docker Image Build:** Builds backend and frontend Docker images using Docker Compose.
+9. **Trivy Security Scan:** Scans Docker images for known vulnerabilities.
+10. **Ansible Deployment:** Executes the Ansible playbook to deploy the application.
+11. **Application Health Verification:** Checks frontend and backend HTTP health endpoints.
+
+### GitHub Webhook Integration
+
+- Configured a GitHub repository webhook to communicate with Jenkins.
+- Enabled automatic Jenkins pipeline triggering on Git push events.
+- Verified successful webhook delivery.
+- Tested automatic pipeline execution after pushing code to the `main` branch.
+
+### Ansible Deployment Automation
+
+Ansible automates application deployment through Docker Compose.
+
+Project structure:
+
+```text
+ansible/
+├── ansible.cfg
+├── inventory/
+│   └── hosts.ini
+└── playbooks/
+    └── deploy.yml
+```
+
+Deployment tasks include:
+
+- Verify Docker Compose configuration exists.
+- Deploy application containers using Docker Compose.
+- Wait for frontend HTTP response.
+- Verify backend API health endpoint.
+- Display deployment status.
+
+### AWS Infrastructure
+
+- AWS EC2 Ubuntu instance for application hosting.
+- Docker-based application deployment.
+- Security Group rules for application access and GitHub webhook communication.
+- Terraform configuration maintained under `infra/terraform/`.
+
+### Application Health Verification
+
+The pipeline verifies application availability using:
+
+```bash
+curl http://127.0.0.1/
+curl http://127.0.0.1/api/health
+```
+
+Successful HTTP responses confirm that the frontend and backend health checks are passing.
+
+---
