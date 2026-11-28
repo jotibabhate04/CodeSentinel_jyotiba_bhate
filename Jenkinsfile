@@ -262,7 +262,7 @@ pipeline {
             }
         }
 
-        stage('Docker Compose Deployment') {
+        stage('Ansible Deployment') {
             steps {
                 sh '''
                     set -eu
@@ -286,7 +286,15 @@ pipeline {
                         export ALLOWED_ORIGINS="http://localhost,http://localhost:80"
                     fi
 
-                    docker compose up -d --remove-orphans
+                    export ANSIBLE_CONFIG="$WORKSPACE/ansible/ansible.cfg"
+
+                    echo "Starting Ansible deployment..."
+
+                    ansible-playbook \
+                      -i "$WORKSPACE/ansible/inventory/hosts.ini" \
+                      "$WORKSPACE/ansible/playbooks/deploy.yml"
+
+                    echo "Ansible deployment completed."
                 '''
             }
         }
