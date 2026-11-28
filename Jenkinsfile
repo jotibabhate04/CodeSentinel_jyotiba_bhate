@@ -228,6 +228,40 @@ pipeline {
             }
         }
 
+        stage('Trivy Security Scan') {
+            steps {
+                sh '''
+                    set -eu
+
+                    echo "======================================"
+                    echo "TRIVY BACKEND IMAGE SECURITY SCAN"
+                    echo "======================================"
+
+                    trivy image \
+                      --scanners vuln \
+                      --exit-code 1 \
+                      --severity CRITICAL,HIGH \
+                      codesentinel-backend:latest
+
+                    echo "Backend image scan passed."
+
+                    echo "======================================"
+                    echo "TRIVY FRONTEND IMAGE SECURITY SCAN"
+                    echo "======================================"
+
+                    trivy image \
+                      --scanners vuln \
+                      --exit-code 1 \
+                      --severity CRITICAL,HIGH \
+                      codesentinel-frontend:latest
+
+                    echo "Frontend image scan passed."
+
+                    echo "All Docker image security scans passed."
+                '''
+            }
+        }
+
         stage('Docker Compose Deployment') {
             steps {
                 sh '''
