@@ -1,0 +1,45 @@
+---
+- name: Deploy CodeSentinel Application
+  hosts: app_servers
+  become: false
+
+  vars:
+    project_dir: "{{ playbook_dir }}/../.."
+
+  tasks:
+    - name: Verify Docker Compose file exists
+      stat:
+        path: "{{ project_dir }}/docker-compose.yml"
+      register: compose_file
+
+    - name: Stop if Compose file is missing
+      fail:
+        msg: "docker-compose.yml not found!"
+      when: not compose_file.stat.exists
+
+    - name: Deploy CodeSentinel using Docker Compose
+      command: docker compose up -d --remove-orphans
+      args:
+        chdir: "{{ project_dir }}"
+
+    - name: Wait for frontend HTTP response
+      uri:
+        url: http://127.0.0.1/
+        status_code: 200
+      register: frontend_health
+      retries: 10
+      delay: 5
+      until: frontend_health.status == 200
+
+    - name: Wait for backend API health
+      uri:
+        url: http://127.0.0.1/api/health
+        status_code: 200
+      register: backend_health
+      retries: 10
+      delay: 5
+      until: backend_health.status == 200
+
+    - name: Display deployment result
+      debug:
+        msg: "CodeSentinel deployment and health checks successful!"
